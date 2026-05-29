@@ -1,0 +1,11 @@
+services:
+  check-status:
+    build: .
+    image: check-status:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - TZ=Europe/Madrid
+    volumes:
+      # Snapshot persists across container restarts on the host filesystem.
+      - ./data:/data

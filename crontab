@@ -1,0 +1,2 @@
+TZ=Europe/Madrid
+0 8,11,14,17,19 * * * root cd /app && python checker.py >> /proc/1/fd/1 2>&1
