@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.14-slim-trixie
+FROM mcr.microsoft.com/playwright/python:v1.60.0-noble
 
 WORKDIR /app
 
@@ -7,10 +7,10 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# ── Playwright + system dependencies ──────────────────────────────────────────
-# --with-deps runs apt-get internally for Chromium's shared libraries;
-# we piggyback cron onto the same apt cache before the cleanup.
-RUN playwright install --with-deps chromium \
+# ── System dependencies ───────────────────────────────────────────────────────
+# The base Playwright image already contains Chromium and the required shared
+# libraries, so we only need cron here.
+RUN apt-get update \
     && apt-get install -y --no-install-recommends cron \
     && rm -rf /var/lib/apt/lists/*
 
