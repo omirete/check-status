@@ -17,12 +17,15 @@ RUN playwright install --with-deps chromium \
 # ── Application code ───────────────────────────────────────────────────────────
 COPY checker.py ./
 COPY homeassistant.py ./
+COPY entrypoint.sh ./
+RUN sed -i 's/\r$//' entrypoint.sh && chmod +x entrypoint.sh
 COPY crontab /etc/cron.d/check-status
 RUN chmod 644 /etc/cron.d/check-status
+RUN sed -i 's/\r$//' /etc/cron.d/check-status
 
 # Ensure the data directory exists inside the image as a fallback.
 # The volume mount in docker-compose.yml overrides this at runtime.
 RUN mkdir -p /data
 
-# cron -f runs in the foreground so Docker sees it as the main process.
-ENTRYPOINT ["cron", "-f"]
+# entrypoint.sh exports Docker env vars to /etc/environment so cron jobs inherit them.
+ENTRYPOINT ["/app/entrypoint.sh"]
