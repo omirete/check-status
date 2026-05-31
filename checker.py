@@ -17,7 +17,7 @@ import os
 import re
 import sys
 from pathlib import Path
-from .homeassistant import HomeAssistant
+from homeassistant import HomeAssistant
 
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import sync_playwright
