@@ -16,6 +16,7 @@ RUN playwright install --with-deps chromium \
 
 # ── Application code ───────────────────────────────────────────────────────────
 COPY checker.py ./
+COPY homeassistant.py ./
 COPY crontab /etc/cron.d/check-status
 RUN chmod 644 /etc/cron.d/check-status
 

@@ -17,6 +17,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from .homeassistant import HomeAssistant
 
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import sync_playwright
@@ -133,6 +134,9 @@ def fetch_contenido() -> str:
 
 
 def main() -> None:
+
+    ha = HomeAssistant(token=os.getenv("HA_TOKEN") or "")
+
     parser = argparse.ArgumentParser(
         description="Check Registro Civil expedition status for changes."
     )
@@ -157,10 +161,18 @@ def main() -> None:
     if current != previous:
         print("CHANGED")
         log.info("Status has CHANGED since last snapshot.")
+        ha.send_notification(
+            title="Cambios en Registro Civil",
+            message="El estado de su expediente del Registro Civil ha cambiado desde la última verificación.",
+        )
         sys.exit(1)
     else:
         print("UNCHANGED")
         log.info("Status is UNCHANGED.")
+        ha.send_notification(
+            title="Sin cambios en Registro Civil",
+            message="El estado de su expediente del Registro Civil no ha cambiado desde la última verificación.",
+        )
         sys.exit(0)
 
 
