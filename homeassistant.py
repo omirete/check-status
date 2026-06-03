@@ -1,3 +1,4 @@
+import os
 import requests
 
 
@@ -6,7 +7,7 @@ class HomeAssistant:
         if not token or token.strip() == "":
             raise ValueError("HA_TOKEN is required for sending notifications.")
         self._token = token
-        self._home_assistant_url = "http://homeassistant.local:8123"
+        self._home_assistant_url = os.environ.get("HA_URL", "http://homeassistant.local:8123")
 
     def send_notification(self, title: str, message: str):
         """Send a notification to Home Assistant using the REST API."""
