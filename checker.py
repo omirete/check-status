@@ -33,6 +33,7 @@ log = logging.getLogger(__name__)
 
 URL = "https://sede.mjusticia.gob.es/sereci/initComoVaLoMio"
 SNAPSHOT_PATH = Path("/data/snapshot.html")
+CURRENT_SNAPSHOT_PATH = Path("/data/current_snapshot.html")
 
 # Personal data — loaded from environment variables (never hardcode in source)
 NUM_IDENTIFICACION = os.environ["NUM_IDENTIFICACION"]
@@ -156,8 +157,14 @@ def main() -> None:
         sys.exit(0)
 
     previous = SNAPSHOT_PATH.read_text(encoding="utf-8")
-
-
+    
+    CURRENT_SNAPSHOT_PATH.write_text(current, encoding="utf-8")  # Save current snapshot for review regardless of change
+    current = CURRENT_SNAPSHOT_PATH.read_text(encoding="utf-8")  # Read back to ensure consistency
+    
+    # Normalize again to ensure any formatting differences from saving/loading don't affect the comparison
+    current = normalise(current)
+    previous = normalise(previous)
+    
     if current != previous:
         print("CHANGED")
         log.info("Status has CHANGED since last snapshot.")
